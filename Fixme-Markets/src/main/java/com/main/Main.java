@@ -1,17 +1,12 @@
 package com.main;
 
-import java.io.BufferedReader;
 import java.io.IOException;
-import java.io.InputStreamReader;
 import java.net.InetSocketAddress;
 import java.nio.ByteBuffer;
 import java.nio.channels.SelectionKey;
 import java.nio.channels.Selector;
 import java.nio.channels.SocketChannel;
-import java.util.ArrayList;
 import java.util.Iterator;
-import java.util.Scanner;
-import java.util.zip.CRC32;
 
 public class Main {
     private static ByteBuffer byteBuffer = null;
@@ -121,8 +116,7 @@ public class Main {
         }
     }
 
-    public static void handleRequest(SelectionKey key, String brokerRequest)
-    {
+    public static void handleRequest(SelectionKey key, String brokerRequest) {
         // get the channel associated with this key
         SocketChannel socketChannel = (SocketChannel) key.channel();
         // split the brokerRequest string (currently in fix format)
@@ -148,19 +142,17 @@ public class Main {
             time++;
         }
         // append brokerRequestStatus to message for broker display
-        String marketReturn = requestStatus +"|"+ brokerRequest;
+        String marketReturn = requestStatus + "|" + brokerRequest;
         // wrap market response to a buffer for socket
         byteBuffer = ByteBuffer.wrap(marketReturn.getBytes());
 
-        try{
+        try {
             // write marketReturn to socket
             socketChannel.write(byteBuffer);
-            System.out.println(" Message from market: " +marketReturn +"\n Completed");
-            System.out.println(" market time: " +time);
+            System.out.println(" Message from market: " + marketReturn + "\n Completed");
+            System.out.println(" market time: " + time);
 
-        }
-        catch(IOException e)
-        {
+        } catch (IOException e) {
             System.out.println("request failed");
         }
     }

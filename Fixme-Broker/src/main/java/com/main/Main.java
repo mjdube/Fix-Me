@@ -1,20 +1,15 @@
 package com.main;
 
-import com.sun.tools.jdeprscan.scan.Scan;
-
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.io.PrintWriter;
 import java.net.InetSocketAddress;
-import java.net.Socket;
 import java.nio.ByteBuffer;
 import java.nio.channels.SelectionKey;
 import java.nio.channels.Selector;
 import java.nio.channels.SocketChannel;
 import java.util.ArrayList;
 import java.util.Iterator;
-import java.util.Scanner;
 import java.util.zip.CRC32;
 
 public class Main {
@@ -55,13 +50,11 @@ public class Main {
                 Iterator i = selector.selectedKeys().iterator();
                 // define selection key to hold selected key from selectedKeys
                 SelectionKey key = null;
-
                 // romove excess keys from list
                 while (i.hasNext()) {
                     key = (SelectionKey) i.next();
                     i.remove();
                 }
-
                 // process key, if connection failed/ended exit
                 if (processKey(key)) {
                     break;
@@ -101,12 +94,11 @@ public class Main {
         String routerOutput = new String(byteBuffer.array()).trim();
 
         // if ID is not set, then this is the first message received ie.:ID
-        if(ID.isEmpty()) {
+        if (ID.isEmpty()) {
             ID = routerOutput;
             System.out.println(" Broker ID: " + routerOutput);
             Menu(socketChannel);
-        }
-        else {
+        } else {
             // any message after ID is set is sale related
             System.out.println(" Server response: " + routerOutput);
             // update time
@@ -133,10 +125,9 @@ public class Main {
     }
 
     // get user choice and write fixed choice to channels output stream (server that lives on the router)
-    public static void Menu(SocketChannel socketChannel)
-    {
+    public static void Menu(SocketChannel socketChannel) {
         while (true) {
-            try{
+            try {
                 System.out.println(" Would you like to buy or sell 1 unit of time? \n Enter : 1 to buy or 2 to sell ");
                 // get choice
                 String input = bufferedReader.readLine();
@@ -153,7 +144,7 @@ public class Main {
                     System.out.println(" invalid input ");
                 }
 
-            } catch (IOException e){
+            } catch (IOException e) {
                 System.out.println("IO Exception caught: " + e);
             }
         }
@@ -162,7 +153,7 @@ public class Main {
     // set string in fix like notation
     public static String setFix(String choice) {
         // ID = broker ID, targetID = market ID, choice = buy/sell
-        String fixed = ID+"|"+targetID+"|"+choice+"|"+Checksum(choice)+"|";
+        String fixed = ID + "|" + targetID + "|" + choice + "|" + Checksum(choice) + "|";
         return (fixed);
     }
 
@@ -180,21 +171,21 @@ public class Main {
     }
 
     // update time after sale or purchase
-    public static void setTime(String routerOutput){
+    public static void setTime(String routerOutput) {
 
         // split message to validate order status
         String[] routerOutputSplit = routerOutput.split("\\|");
 
         // if order succeful update time
-        if(routerOutputSplit[0].equals("accepted")){
-            if (routerOutputSplit[3].equals("1")){
+        if (routerOutputSplit[0].equals("accepted")) {
+            if (routerOutputSplit[3].equals("1")) {
                 // if order way buy, increase time by one unit
                 time++;
-                System.out.println("time: "+time);
+                System.out.println("time: " + time);
             } else {
                 // if order was sell, decrease order by one unit
                 time--;
-                System.out.println("time: "+time);
+                System.out.println("time: " + time);
             }
             System.out.println(" order was sucessful and completed ");
         } else {
